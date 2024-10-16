@@ -1,5 +1,6 @@
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 import { UserType } from 'src/users/interfaces/user.interface';
+import { IsEmail } from 'class-validator';
 
 @Entity()
 export class User {
@@ -20,6 +21,7 @@ export class User {
   @Column({
     type: 'varchar',
   })
+  @IsEmail()
   email: string;
   @Column({
     type: 'varchar',
