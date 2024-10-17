@@ -1,4 +1,4 @@
-import { Controller, Get, HttpCode } from '@nestjs/common';
+import { Controller, Get, HttpCode, Param } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { User } from 'src/models/users/user.entity';
 
@@ -10,5 +10,11 @@ export class UsersController {
   @HttpCode(200)
   findAll(): Promise<User[]> {
     return this.usersService.findAll();
+  }
+
+  @Get(':email')
+  @HttpCode(200)
+  findOne(@Param() params: { email: string }): Promise<User> {
+    return this.usersService.findOne(params.email);
   }
 }

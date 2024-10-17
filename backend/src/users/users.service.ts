@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from 'src/models/users/user.entity';
 import { Repository } from 'typeorm';
@@ -21,7 +21,44 @@ export class UsersService {
 
       return mappedUsers;
     } catch (error) {
-      throw new Error(error);
+      throw new HttpException(
+        {
+          status: HttpStatus.INTERNAL_SERVER_ERROR,
+          error: error.message,
+        },
+        HttpStatus.INTERNAL_SERVER_ERROR,
+        {
+          cause: error,
+        },
+      );
+    }
+  }
+
+  async findOne(email: string): Promise<User> {
+    try {
+      const user = await this.userRepository.findOne({
+        where: { email },
+      });
+
+      if (!user) throw new Error('User not found');
+
+      const mappedUser = {
+        ...user,
+        password: undefined,
+      };
+
+      return mappedUser;
+    } catch (error) {
+      throw new HttpException(
+        {
+          status: HttpStatus.NOT_FOUND,
+          error: error.message,
+        },
+        HttpStatus.NOT_FOUND,
+        {
+          cause: error,
+        },
+      );
     }
   }
 }
