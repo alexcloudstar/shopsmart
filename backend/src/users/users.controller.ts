@@ -21,9 +21,9 @@ export class UsersController {
     return this.usersService.findAll();
   }
 
-  @Get(':email')
+  @Get(':id')
   @HttpCode(HttpStatus.OK)
-  findOne(@Param() params: { email: string }): Promise<User> {
-    return this.usersService.findOne(params.email);
+  findOne(@Param() params: { id: string }): Promise<User> {
+    return this.usersService.findOne(params.id);
   }
 }
