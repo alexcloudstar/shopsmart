@@ -9,8 +9,10 @@ export class AuthController {
 
   @Post('/login')
   @HttpCode(HttpStatus.OK)
-  async login(@Body() user: User): Promise<Omit<User, 'password'>> {
-    return this.authService.login(user.email, user.password);
+  async login(
+    @Body() signInDto: Record<string, any>,
+  ): Promise<Omit<User, 'password'>> {
+    return this.authService.login(signInDto.email, signInDto.password);
   }
 
   @Post('/register')
