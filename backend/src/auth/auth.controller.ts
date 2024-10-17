@@ -7,6 +7,12 @@ import { AuthService } from './auth.service';
 export class AuthController {
   constructor(private authService: AuthService) {}
 
+  @Post('/login')
+  @HttpCode(200)
+  async login(@Body() user: User): Promise<Omit<User, 'password'>> {
+    return this.authService.login(user.email, user.password);
+  }
+
   @Post('/register')
   @HttpCode(201)
   async create(@Body() createUser: User): Promise<User> {
@@ -23,7 +29,7 @@ export class AuthController {
 
     const userType = assignUserType(createUser.type);
 
-    return this.authService.create({
+    return this.authService.register({
       ...createUser,
       type: userType,
     });
