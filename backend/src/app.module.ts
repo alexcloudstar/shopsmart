@@ -9,6 +9,9 @@ import { Address } from './models/addresses/addresses.entity';
 import { UsersController } from './users/users.controller';
 import { UsersModule } from './users/users.module';
 import { UsersService } from './users/users.service';
+import { AuthModule } from './auth/auth.module';
+import { AuthService } from './auth/auth.service';
+import { AuthController } from './auth/auth.controller';
 
 @Module({
   imports: [
@@ -25,9 +28,10 @@ import { UsersService } from './users/users.service';
       autoLoadEntities: true,
     }),
     UsersModule,
+    AuthModule,
   ],
-  controllers: [AppController, UsersController],
-  providers: [AppService, UsersService],
+  controllers: [AppController, UsersController, AuthController],
+  providers: [AppService, UsersService, AuthService],
 })
 export class AppModule {
   constructor(private dataSource: DataSource) {}
