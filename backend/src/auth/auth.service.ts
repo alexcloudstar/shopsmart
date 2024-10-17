@@ -8,15 +8,20 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { User } from 'src/models/users/user.entity';
 import { Repository } from 'typeorm';
 import * as argon2 from 'argon2';
+import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class AuthService {
   constructor(
     @InjectRepository(User)
     private userRepository: Repository<User>,
+    private jwtService: JwtService,
   ) {}
 
-  async login(email: string, inputPw: string): Promise<Omit<User, 'password'>> {
+  async login(
+    email: string,
+    inputPw: string,
+  ): Promise<{ access_token: string }> {
     try {
       const user = await this.userRepository.findOne({
         where: { email },
@@ -28,11 +33,10 @@ export class AuthService {
 
       if (!isPasswordValid) throw new UnauthorizedException();
 
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const { password, ...result } = user;
-      // TODO: Generate a JWT and return it here
-      // instead of the user object
-      return result;
+      const payload = { email: user.email, sub: user.id };
+      return {
+        access_token: await this.jwtService.signAsync(payload),
+      };
     } catch (error) {
       throw new HttpException(
         {

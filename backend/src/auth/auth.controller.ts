@@ -11,7 +11,7 @@ export class AuthController {
   @HttpCode(HttpStatus.OK)
   async login(
     @Body() signInDto: Record<string, any>,
-  ): Promise<Omit<User, 'password'>> {
+  ): Promise<{ access_token: string }> {
     return this.authService.login(signInDto.email, signInDto.password);
   }
 

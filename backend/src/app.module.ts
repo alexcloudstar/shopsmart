@@ -12,6 +12,7 @@ import { UsersService } from './users/users.service';
 import { AuthModule } from './auth/auth.module';
 import { AuthService } from './auth/auth.service';
 import { AuthController } from './auth/auth.controller';
+import constants from './common/constants';
 
 @Module({
   imports: [
@@ -20,9 +21,9 @@ import { AuthController } from './auth/auth.controller';
       type: 'postgres',
       host: 'db',
       port: 5432,
-      username: process.env.DB_USERNAME,
-      password: process.env.DB_PASSWORD,
-      database: process.env.DB_NAME,
+      username: constants().db.username,
+      password: constants().db.password,
+      database: constants().db.database,
       entities: [User, Address],
       synchronize: true,
       autoLoadEntities: true,
