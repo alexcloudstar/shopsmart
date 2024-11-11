@@ -1,4 +1,9 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import {
+  HttpException,
+  HttpStatus,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { IJWT_PAYLOAD } from 'src/common/types';
 import { User } from 'src/models/users/user.entity';
@@ -28,6 +33,32 @@ export class UsersService {
           error: error.message,
         },
         HttpStatus.INTERNAL_SERVER_ERROR,
+        {
+          cause: error,
+        },
+      );
+    }
+  }
+
+  async me(req: Request & { user: User }): Promise<User> {
+    try {
+      if (!req.user) throw new UnauthorizedException();
+
+      const user = await this.userRepository.findOne({
+        where: { id: req.user.id },
+      });
+
+      return {
+        ...user,
+        password: undefined,
+      };
+    } catch (error) {
+      throw new HttpException(
+        {
+          status: HttpStatus.NOT_FOUND,
+          error: error.message,
+        },
+        HttpStatus.NOT_FOUND,
         {
           cause: error,
         },

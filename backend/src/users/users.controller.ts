@@ -6,6 +6,7 @@ import {
   HttpStatus,
   Param,
   Patch,
+  Req,
   UseGuards,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
@@ -23,6 +24,12 @@ export class UsersController {
   @HttpCode(HttpStatus.OK)
   findAll(): Promise<User[]> {
     return this.usersService.findAll();
+  }
+
+  @Get('me')
+  @HttpCode(HttpStatus.OK)
+  me(@Req() req: Request & { user: User }): Promise<User> {
+    return this.usersService.me(req);
   }
 
   @Get(':id')
