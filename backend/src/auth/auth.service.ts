@@ -51,7 +51,7 @@ export class AuthService {
     }
   }
 
-  async register(createUserDto: User): Promise<User> {
+  async register(createUserDto: User): Promise<{ access_token: string }> {
     try {
       const user = await this.userRepository.findOne({
         where: { email: createUserDto.email },
@@ -67,12 +67,11 @@ export class AuthService {
 
       const savedUser = await this.userRepository.save(createUserDto);
 
-      const mappedUser = {
-        ...savedUser,
-        password: undefined,
-      };
+      const payload = { email: savedUser.email, savedUser: savedUser.id };
 
-      return mappedUser;
+      return {
+        access_token: await this.jwtService.signAsync(payload),
+      };
     } catch (error) {
       throw new HttpException(
         {

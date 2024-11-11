@@ -17,7 +17,7 @@ export class AuthController {
 
   @Post('/register')
   @HttpCode(HttpStatus.CREATED)
-  async create(@Body() createUser: User): Promise<User> {
+  async create(@Body() createUser: User): Promise<{ access_token: string }> {
     const assignUserType = (type: string): UserType => {
       switch (type) {
         case 'admin':
