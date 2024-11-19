@@ -57,15 +57,17 @@ export class Product {
   })
   size: string;
   @Column({
-    type: 'varchar',
+    type: 'int',
   })
-  stock: string;
+  stock: number;
   @Column({
-    type: 'varchar',
+    type: 'float',
+    nullable: true,
   })
-  rating: string;
+  rating: number;
   @Column({
-    type: 'varchar',
+    type: 'float',
+    nullable: true,
   })
-  discount: string;
+  discount: number;
 }
