@@ -8,7 +8,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Product } from 'src/models/products/product.entity';
 import { Repository } from 'typeorm';
 import { TProductDto } from './interfaces/product.dto';
-import { User } from 'src/models/users/user.entity';
 import { UsersService } from 'src/users/users.service';
 
 @Injectable()
