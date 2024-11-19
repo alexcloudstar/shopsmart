@@ -12,7 +12,7 @@ import {
 import { UsersService } from './users.service';
 import { User } from 'src/models/users/user.entity';
 import { AuthGuard } from 'src/auth/auth.guard';
-import { IJWT_PAYLOAD } from 'src/common/types';
+import { IJWT_PAYLOAD, IRequestWithUser } from 'src/common/types';
 import { JWTPayloadDecorator } from 'src/common/decorators/jwt_payload.decorator';
 
 @UseGuards(AuthGuard)
@@ -28,7 +28,7 @@ export class UsersController {
 
   @Get('me')
   @HttpCode(HttpStatus.OK)
-  me(@Req() req: Request & { user: { sub: string } }): Promise<User> {
+  me(@Req() req: IRequestWithUser): Promise<User> {
     return this.usersService.me(req);
   }
 

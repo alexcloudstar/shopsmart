@@ -5,7 +5,7 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { IJWT_PAYLOAD } from 'src/common/types';
+import { IJWT_PAYLOAD, IRequestWithUser } from 'src/common/types';
 import { User } from 'src/models/users/user.entity';
 import { Repository } from 'typeorm';
 
@@ -40,7 +40,7 @@ export class UsersService {
     }
   }
 
-  async me(req: Request & { user: { sub: string } }): Promise<User> {
+  async me(req: IRequestWithUser): Promise<User> {
     try {
       if (!req.user) throw new UnauthorizedException();
 

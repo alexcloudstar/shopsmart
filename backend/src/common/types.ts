@@ -4,3 +4,7 @@ export interface IJWT_PAYLOAD {
   iat: number;
   exp: number;
 }
+
+export interface IRequestWithUser extends Request {
+  user: IJWT_PAYLOAD;
+}
