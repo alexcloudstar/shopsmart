@@ -40,12 +40,12 @@ export class UsersService {
     }
   }
 
-  async me(req: Request & { user: User }): Promise<User> {
+  async me(req: Request & { user: { sub: string } }): Promise<User> {
     try {
       if (!req.user) throw new UnauthorizedException();
 
       const user = await this.userRepository.findOne({
-        where: { id: req.user.id },
+        where: { id: req.user.sub },
       });
 
       return {

@@ -28,7 +28,7 @@ export class UsersController {
 
   @Get('me')
   @HttpCode(HttpStatus.OK)
-  me(@Req() req: Request & { user: User }): Promise<User> {
+  me(@Req() req: Request & { user: { sub: string } }): Promise<User> {
     return this.usersService.me(req);
   }
 
