@@ -67,8 +67,6 @@ export class ProductsService {
     try {
       const user = await this.userService.findOne(user_id);
 
-      console.log(user_id);
-
       if (!user.type.includes('vendor')) {
         throw new ForbiddenException('Only vendors can create products');
       }
