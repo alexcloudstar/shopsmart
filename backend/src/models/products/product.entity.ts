@@ -1,0 +1,71 @@
+import {
+  Column,
+  Entity,
+  ManyToMany,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
+import { User } from 'src/models/users/user.entity';
+
+@Entity()
+export class Product {
+  @PrimaryGeneratedColumn()
+  id: string;
+  @Column({
+    type: 'varchar',
+  })
+  title: string;
+  @Column({
+    array: true,
+    type: 'varchar',
+  })
+  pictures: string[];
+  @Column({
+    type: 'float',
+  })
+  price: number;
+  @ManyToMany(() => User, (user) => user.favorites, {
+    nullable: true,
+  })
+  is_favorite: boolean;
+  @ManyToOne(() => User, (user) => user.products, {
+    nullable: true,
+  })
+  vendor: string;
+  @Column({
+    type: 'varchar',
+  })
+  description: string;
+  @Column({
+    type: 'varchar',
+  })
+  category: string;
+  @Column({
+    type: 'varchar',
+  })
+  sub_category: string;
+  @Column({
+    type: 'varchar',
+  })
+  brand: string;
+  @Column({
+    type: 'varchar',
+  })
+  color: string;
+  @Column({
+    type: 'varchar',
+  })
+  size: string;
+  @Column({
+    type: 'varchar',
+  })
+  stock: string;
+  @Column({
+    type: 'varchar',
+  })
+  rating: string;
+  @Column({
+    type: 'varchar',
+  })
+  discount: string;
+}
