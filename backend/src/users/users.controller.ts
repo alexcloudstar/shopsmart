@@ -5,7 +5,7 @@ import {
   HttpCode,
   HttpStatus,
   Param,
-  Patch,
+  Put,
   Req,
   UseGuards,
 } from '@nestjs/common';
@@ -28,7 +28,7 @@ export class UsersController {
 
   @Get('me')
   @HttpCode(HttpStatus.OK)
-  me(@Req() req: IRequestWithUser): Promise<User> {
+  me(@Req() req: Request & IRequestWithUser): Promise<User> {
     return this.usersService.me(req);
   }
 
@@ -38,13 +38,12 @@ export class UsersController {
     return this.usersService.findOne(params.id);
   }
 
-  @Patch(':id')
+  @Put('/update_profile')
   @HttpCode(HttpStatus.OK)
   update(
-    @Param() params: { id: string },
     @Body() user: User,
     @JWTPayloadDecorator() jwt_payload: IJWT_PAYLOAD,
   ): Promise<User> {
-    return this.usersService.update(params.id, user, jwt_payload);
+    return this.usersService.update_profile(user, jwt_payload);
   }
 }

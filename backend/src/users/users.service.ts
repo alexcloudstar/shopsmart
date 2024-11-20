@@ -94,19 +94,14 @@ export class UsersService {
     }
   }
 
-  async update(
-    id: string,
+  async update_profile(
     fields: Record<string, any>,
     jwt_payload: IJWT_PAYLOAD,
   ): Promise<User> {
     try {
-      const user = await this.findOne(id);
+      const user = await this.findOne(jwt_payload.sub);
 
       if (!user) throw new Error('User not found');
-
-      if (jwt_payload.sub !== user.id) {
-        throw new Error('Unauthorized');
-      }
 
       const updatedUser = await this.userRepository.save({
         ...user,
@@ -118,6 +113,8 @@ export class UsersService {
         password: undefined,
       };
     } catch (error) {
+      console.log(error);
+
       throw new HttpException(
         {
           status: HttpStatus.INTERNAL_SERVER_ERROR,

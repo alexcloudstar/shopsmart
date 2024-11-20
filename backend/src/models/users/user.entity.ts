@@ -1,6 +1,7 @@
 import {
   Column,
   Entity,
+  JoinTable,
   ManyToMany,
   OneToMany,
   PrimaryGeneratedColumn,
@@ -47,7 +48,6 @@ export class User {
     array: true,
     nullable: true,
   })
-  @ManyToMany(() => Product, (product) => product.is_favorite)
   @Column({
     type: 'varchar',
     array: true,

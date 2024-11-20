@@ -1,7 +1,6 @@
 import {
   Column,
   Entity,
-  ManyToMany,
   ManyToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
@@ -24,10 +23,6 @@ export class Product {
     type: 'float',
   })
   price: number;
-  @ManyToMany(() => User, (user) => user.favorites, {
-    nullable: true,
-  })
-  is_favorite: boolean;
   @Column({
     type: 'varchar',
   })
