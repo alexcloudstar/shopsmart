@@ -167,28 +167,45 @@ export class ProductsService {
   async addFavorite(
     product_id: string,
     @JWTPayloadDecorator() jwt_payload: IJWT_PAYLOAD,
-  ): Promise<string> {
+  ): Promise<{
+    message: string;
+  }> {
     try {
       const product = await this.productRepository.findOne({
         where: { id: product_id },
       });
-      const user = await this.userService.findOne(jwt_payload.sub);
-      const userFavorites = user.favorites;
 
-      if (userFavorites.includes(product.id)) {
-        userFavorites.splice(userFavorites.indexOf(product.id), 1);
+      if (!product) {
+        throw new HttpException(
+          {
+            status: HttpStatus.NOT_FOUND,
+            error: 'Product not found',
+          },
+          HttpStatus.NOT_FOUND,
+        );
       }
 
-      userFavorites.push(product.id);
+      const user = await this.userService.findOne(jwt_payload.sub);
+      let message = '';
+
+      if (!user.favorites.includes(product_id)) {
+        user.favorites = [...user.favorites, product_id];
+        message = 'Product added to favorites';
+      } else {
+        message = 'Product removed from favorites';
+        user.favorites = user.favorites.filter((id) => id !== product_id);
+      }
 
       await this.userService.update_profile(
         {
-          favorites: userFavorites,
+          favorites: user.favorites,
         },
         jwt_payload,
       );
 
-      return 'Product added to favorites';
+      return {
+        message,
+      };
     } catch (error) {
       console.log(error);
       throw new HttpException(
@@ -208,7 +225,9 @@ export class ProductsService {
     product_id: string,
     user_id: string,
     rating: number,
-  ): Promise<string> {
+  ): Promise<{
+    message: string;
+  }> {
     console.log({
       product_id,
       user_id,

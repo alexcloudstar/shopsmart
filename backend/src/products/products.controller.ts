@@ -60,10 +60,12 @@ export class ProductsController {
 
   @Patch('/favorite/:product_id')
   addFavorite(
-    product_id: string,
+    @Param() params: { product_id: string },
     @JWTPayloadDecorator() jwt_payload: IJWT_PAYLOAD,
-  ): Promise<string> {
-    return this.productService.addFavorite(product_id, jwt_payload);
+  ): Promise<{
+    message: string;
+  }> {
+    return this.productService.addFavorite(params.product_id, jwt_payload);
   }
 
   @Patch('/rating/:product_id')
@@ -71,7 +73,9 @@ export class ProductsController {
     product_id: string,
     user_id: string,
     @Body() rating: number,
-  ): Promise<string> {
+  ): Promise<{
+    message: string;
+  }> {
     return this.productService.addRating(product_id, user_id, rating);
   }
 
