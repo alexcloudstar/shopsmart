@@ -42,7 +42,17 @@ export class ProductsController {
   }
 
   @Put('/update/:id')
-  update(): string {
-    return 'This action updates a product';
+  update(
+    @Param('id') id: string,
+    @Body() createProductDto: TProductDto,
+    @Req() req: IRequestWithUser,
+  ): Promise<Product> {
+    return this.productService.update(id, createProductDto, req.user.sub);
   }
+
+  // get all products of vendor (user don't have to be vendor)
+  // add favorite
+  // add rating
+  // add to cart
+  // add to wishlist
 }

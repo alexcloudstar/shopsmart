@@ -89,4 +89,54 @@ export class ProductsService {
       );
     }
   }
+
+  async update(
+    product_id: string,
+    updateProductDto: TProductDto,
+    user_id: string,
+  ): Promise<Product> {
+    try {
+      const user = await this.userService.findOne(user_id);
+
+      if (!user.type.includes('vendor')) {
+        throw new ForbiddenException('Only vendors can update products');
+      }
+
+      const product = await this.productRepository.findOne({
+        where: { id: product_id },
+      });
+
+      if (!product) {
+        throw new HttpException(
+          {
+            status: HttpStatus.NOT_FOUND,
+            error: 'Product not found',
+          },
+          HttpStatus.NOT_FOUND,
+        );
+      }
+
+      if (product.vendor_id !== user.id.toString()) {
+        throw new ForbiddenException('You can only update your own products');
+      }
+
+      const updatedProduct = await this.productRepository.save({
+        ...product,
+        ...updateProductDto,
+      });
+
+      return updatedProduct;
+    } catch (error) {
+      throw new HttpException(
+        {
+          status: HttpStatus.CONFLICT,
+          error: error.message,
+        },
+        HttpStatus.INTERNAL_SERVER_ERROR,
+        {
+          cause: error,
+        },
+      );
+    }
+  }
 }
