@@ -9,6 +9,9 @@ import { Product } from 'src/models/products/product.entity';
 import { Repository } from 'typeorm';
 import { TProductDto } from './interfaces/product.dto';
 import { UsersService } from 'src/users/users.service';
+import { on } from 'events';
+import { IJWT_PAYLOAD, IRequestWithUser } from 'src/common/types';
+import { JWTPayloadDecorator } from 'src/common/decorators/jwt_payload.decorator';
 
 @Injectable()
 export class ProductsService {
@@ -138,5 +141,81 @@ export class ProductsService {
         },
       );
     }
+  }
+
+  async findVendorProducts(vendor_id: string): Promise<Product[]> {
+    try {
+      const products = await this.productRepository.find({
+        where: { vendor_id },
+      });
+
+      return products;
+    } catch (error) {
+      throw new HttpException(
+        {
+          status: HttpStatus.INTERNAL_SERVER_ERROR,
+          error: error.message,
+        },
+        HttpStatus.INTERNAL_SERVER_ERROR,
+        {
+          cause: error,
+        },
+      );
+    }
+  }
+
+  async addFavorite(
+    product_id: string,
+    @JWTPayloadDecorator() jwt_payload: IJWT_PAYLOAD,
+  ): Promise<string> {
+    try {
+      const product = await this.productRepository.findOne({
+        where: { id: product_id },
+      });
+      const user = await this.userService.findOne(jwt_payload.sub);
+      const userFavorites = user.favorites;
+
+      if (userFavorites.includes(product.id)) {
+        userFavorites.splice(userFavorites.indexOf(product.id), 1);
+      }
+
+      userFavorites.push(product.id);
+
+      await this.userService.update(
+        user.id,
+        {
+          favorites: userFavorites,
+        },
+        jwt_payload,
+      );
+
+      return 'Product added to favorites';
+    } catch (error) {
+      console.log(error);
+      throw new HttpException(
+        {
+          status: HttpStatus.INTERNAL_SERVER_ERROR,
+          error: error.message,
+        },
+        HttpStatus.INTERNAL_SERVER_ERROR,
+        {
+          cause: error,
+        },
+      );
+    }
+  }
+
+  async addRating(
+    product_id: string,
+    user_id: string,
+    rating: number,
+  ): Promise<string> {
+    console.log({
+      product_id,
+      user_id,
+      rating,
+    });
+
+    return '';
   }
 }
