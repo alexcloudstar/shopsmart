@@ -28,10 +28,11 @@ export class Product {
     nullable: true,
   })
   is_favorite: boolean;
-  @ManyToOne(() => User, (user) => user.products, {
-    nullable: true,
+  @Column({
+    type: 'varchar',
   })
-  vendor: string;
+  @ManyToOne(() => User, (user) => user.products)
+  vendor_id: string;
   @Column({
     type: 'varchar',
   })

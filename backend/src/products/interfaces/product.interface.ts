@@ -5,7 +5,7 @@ export type TProduct = {
   pictures: string[];
   price: number;
   is_favorite: boolean;
-  vendor: string;
+  vendor_id: string;
   category: string;
   sub_category: string;
   brand: string;

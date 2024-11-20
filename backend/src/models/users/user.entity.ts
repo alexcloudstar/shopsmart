@@ -40,9 +40,7 @@ export class User {
     default: UserType.USER,
   })
   type: UserType;
-  @OneToMany(() => Product, (product) => product.vendor, {
-    nullable: true,
-  })
+  @OneToMany(() => Product, (product) => product.vendor_id)
   products: string[];
   @ManyToMany(() => Product, (product) => product.is_favorite)
   favorites: string[];

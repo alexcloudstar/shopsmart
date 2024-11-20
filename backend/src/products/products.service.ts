@@ -73,7 +73,7 @@ export class ProductsService {
 
       const product = await this.productRepository.save({
         ...createProductDto,
-        vendor: user.id,
+        vendor_id: user.id.toString(),
       });
       return product;
     } catch (error) {
