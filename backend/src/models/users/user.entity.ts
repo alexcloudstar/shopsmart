@@ -42,6 +42,16 @@ export class User {
   type: UserType;
   @OneToMany(() => Product, (product) => product.vendor_id)
   products: string[];
+  @Column({
+    type: 'varchar',
+    array: true,
+    nullable: true,
+  })
   @ManyToMany(() => Product, (product) => product.is_favorite)
+  @Column({
+    type: 'varchar',
+    array: true,
+    default: [],
+  })
   favorites: string[];
 }
