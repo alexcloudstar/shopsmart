@@ -181,8 +181,7 @@ export class ProductsService {
 
       userFavorites.push(product.id);
 
-      await this.userService.update(
-        user.id,
+      await this.userService.update_profile(
         {
           favorites: userFavorites,
         },
