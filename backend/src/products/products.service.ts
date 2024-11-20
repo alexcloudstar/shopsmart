@@ -234,6 +234,8 @@ export class ProductsService {
       rating,
     });
 
-    return '';
+        return {
+            message: 'Rating added',
+        }
   }
 }
