@@ -8,3 +8,8 @@ export interface IJWT_PAYLOAD {
 export interface IRequestWithUser extends Request {
   user: IJWT_PAYLOAD;
 }
+
+export type TRequest = {
+  status: number;
+  message: string;
+};
