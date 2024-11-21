@@ -277,4 +277,89 @@ export class ProductsService {
       );
     }
   }
+
+  async addToCart(
+    product_id: string,
+    @JWTPayloadDecorator() jwt_payload: IJWT_PAYLOAD,
+  ): Promise<{
+    message: string;
+  }> {
+    try {
+      const product = await this.productRepository.findOne({
+        where: { id: product_id },
+      });
+
+      if (!product) {
+        throw new HttpException(
+          {
+            status: HttpStatus.NOT_FOUND,
+            error: 'Product not found',
+          },
+          HttpStatus.NOT_FOUND,
+        );
+      }
+
+      const user = await this.userService.findOne(jwt_payload.sub);
+      let message = '';
+
+      if (!user.cart.includes(product_id)) {
+        user.cart = [...user.cart, product_id];
+        message = 'Product added to cart';
+      } else {
+        message = 'Product removed from cart';
+        user.cart = user.cart.filter((id) => id !== product_id);
+      }
+
+      await this.userService.update_profile(
+        {
+          cart: user.cart,
+        },
+        jwt_payload,
+      );
+
+      return {
+        message,
+      };
+    } catch (error) {
+      throw new HttpException(
+        {
+          status: HttpStatus.INTERNAL_SERVER_ERROR,
+          error: error.message,
+        },
+        HttpStatus.INTERNAL_SERVER_ERROR,
+        {
+          cause: error,
+        },
+      );
+    }
+  }
+
+  async placeOrder(@JWTPayloadDecorator() jwt_payload: IJWT_PAYLOAD): Promise<{
+    status: number;
+    message: string;
+  }> {
+    try {
+      const user = await this.userService.findOne(jwt_payload.sub);
+
+      const cart = user.cart;
+
+      // You can add more logic here to handle the order
+
+      return {
+        status: HttpStatus.OK,
+        message: 'Order placed',
+      };
+    } catch (error) {
+      throw new HttpException(
+        {
+          status: HttpStatus.INTERNAL_SERVER_ERROR,
+          error: error.message,
+        },
+        HttpStatus.INTERNAL_SERVER_ERROR,
+        {
+          cause: error,
+        },
+      );
+    }
+  }
 }

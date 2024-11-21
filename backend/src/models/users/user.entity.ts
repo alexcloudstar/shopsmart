@@ -1,11 +1,4 @@
-import {
-  Column,
-  Entity,
-  JoinTable,
-  ManyToMany,
-  OneToMany,
-  PrimaryGeneratedColumn,
-} from 'typeorm';
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { UserType } from 'src/users/interfaces/user.interface';
 import { IsEmail } from 'class-validator';
 import { Product } from '../products/product.entity';
@@ -54,4 +47,10 @@ export class User {
     default: [],
   })
   favorites: string[];
+  @Column({
+    type: 'varchar',
+    array: true,
+    default: [],
+  })
+  cart: string[];
 }
