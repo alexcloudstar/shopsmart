@@ -9,7 +9,7 @@ import { Product } from 'src/models/products/product.entity';
 import { Repository } from 'typeorm';
 import { TProductDto } from './interfaces/product.dto';
 import { UsersService } from 'src/users/users.service';
-import { IJWT_PAYLOAD } from 'src/common/types';
+import { IJWT_PAYLOAD, TRequest } from 'src/common/types';
 import { JWTPayloadDecorator } from 'src/common/decorators/jwt_payload.decorator';
 import { calculateNewRating } from './utils';
 
@@ -167,9 +167,7 @@ export class ProductsService {
   async addFavorite(
     product_id: string,
     @JWTPayloadDecorator() jwt_payload: IJWT_PAYLOAD,
-  ): Promise<{
-    message: string;
-  }> {
+  ): Promise<TRequest> {
     try {
       const product = await this.productRepository.findOne({
         where: { id: product_id },
@@ -204,6 +202,7 @@ export class ProductsService {
       );
 
       return {
+        status: HttpStatus.OK,
         message,
       };
     } catch (error) {
@@ -224,9 +223,7 @@ export class ProductsService {
     product_id: string,
     rating: number,
     jwt_payload: IJWT_PAYLOAD,
-  ): Promise<{
-    message: string;
-  }> {
+  ): Promise<TRequest> {
     try {
       const product = await this.productRepository.findOne({
         where: { id: product_id },
@@ -262,6 +259,7 @@ export class ProductsService {
       );
 
       return {
+        status: HttpStatus.OK,
         message: 'Rating added',
       };
     } catch (error) {
@@ -281,9 +279,7 @@ export class ProductsService {
   async addToCart(
     product_id: string,
     @JWTPayloadDecorator() jwt_payload: IJWT_PAYLOAD,
-  ): Promise<{
-    message: string;
-  }> {
+  ): Promise<TRequest> {
     try {
       const product = await this.productRepository.findOne({
         where: { id: product_id },
@@ -318,6 +314,7 @@ export class ProductsService {
       );
 
       return {
+        status: HttpStatus.OK,
         message,
       };
     } catch (error) {
@@ -334,16 +331,15 @@ export class ProductsService {
     }
   }
 
-  async placeOrder(@JWTPayloadDecorator() jwt_payload: IJWT_PAYLOAD): Promise<{
-    status: number;
-    message: string;
-  }> {
+  async placeOrder(
+    @JWTPayloadDecorator() jwt_payload: IJWT_PAYLOAD,
+  ): Promise<TRequest> {
     try {
       const user = await this.userService.findOne(jwt_payload.sub);
 
       const cart = user.cart;
 
-      // You can add more logic here to handle the order
+      // TODO: You can add more logic here to handle the order
 
       return {
         status: HttpStatus.OK,

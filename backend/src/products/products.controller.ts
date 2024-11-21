@@ -15,7 +15,7 @@ import { AuthGuard } from 'src/auth/auth.guard';
 import { ProductsService } from './products.service';
 import { Product } from 'src/models/products/product.entity';
 import { TProductDto } from './interfaces/product.dto';
-import { IJWT_PAYLOAD, IRequestWithUser } from 'src/common/types';
+import { IJWT_PAYLOAD, IRequestWithUser, TRequest } from 'src/common/types';
 import { JWTPayloadDecorator } from 'src/common/decorators/jwt_payload.decorator';
 
 @UseGuards(AuthGuard)
@@ -62,9 +62,7 @@ export class ProductsController {
   addFavorite(
     @Param() params: { product_id: string },
     @JWTPayloadDecorator() jwt_payload: IJWT_PAYLOAD,
-  ): Promise<{
-    message: string;
-  }> {
+  ): Promise<TRequest> {
     return this.productService.addFavorite(params.product_id, jwt_payload);
   }
 
@@ -73,9 +71,7 @@ export class ProductsController {
     @Param() params: { product_id: string },
     @Body() body: { rating: number },
     @JWTPayloadDecorator() jwt_payload: IJWT_PAYLOAD,
-  ): Promise<{
-    message: string;
-  }> {
+  ): Promise<TRequest> {
     return this.productService.addRating(
       params.product_id,
       body.rating,
@@ -87,17 +83,14 @@ export class ProductsController {
   addToCart(
     @Param() params: { product_id: string },
     @JWTPayloadDecorator() jwt_payload: IJWT_PAYLOAD,
-  ): Promise<{
-    message: string;
-  }> {
+  ): Promise<TRequest> {
     return this.productService.addToCart(params.product_id, jwt_payload);
   }
 
   @Patch('/order')
-  placeOrder(@JWTPayloadDecorator() jwt_payload: IJWT_PAYLOAD): Promise<{
-    status: number;
-    message: string;
-  }> {
+  placeOrder(
+    @JWTPayloadDecorator() jwt_payload: IJWT_PAYLOAD,
+  ): Promise<TRequest> {
     return this.productService.placeOrder(jwt_payload);
   }
 }
