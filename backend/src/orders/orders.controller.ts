@@ -1,12 +1,10 @@
 import {
-  Body,
   Controller,
   Get,
   HttpCode,
   HttpStatus,
   Param,
   Post,
-  Put,
   UseGuards,
 } from '@nestjs/common';
 import { OrdersService } from './orders.service';
@@ -35,14 +33,5 @@ export class OrdersController {
   @Post()
   create(@JWTPayloadDecorator() jwt_payload: IJWT_PAYLOAD): Promise<Order> {
     return this.orderService.create(jwt_payload);
-  }
-
-  @Put('/update/:id')
-  update(
-    @Param('id') id: string,
-    @Body() createOrderDto: any,
-    @JWTPayloadDecorator() jwt_payload: IJWT_PAYLOAD,
-  ): Promise<Order> {
-    return this.orderService.update(id, createOrderDto, jwt_payload);
   }
 }

@@ -126,46 +126,4 @@ export class OrdersService {
       );
     }
   }
-
-  async update(
-    id: string,
-    createOrderDto: any,
-    jwt_payload: IJWT_PAYLOAD,
-  ): Promise<Order> {
-    try {
-      const order = await this.orderRepository.findOne({
-        where: {
-          id,
-        },
-      });
-
-      if (!order) {
-        throw new HttpException(
-          {
-            status: HttpStatus.NOT_FOUND,
-            error: 'Order not found',
-          },
-          HttpStatus.NOT_FOUND,
-        );
-      }
-
-      const updatedOrder = await this.orderRepository.save({
-        ...order,
-        ...createOrderDto,
-      });
-
-      return updatedOrder;
-    } catch (error) {
-      throw new HttpException(
-        {
-          status: error.status || HttpStatus.INTERNAL_SERVER_ERROR,
-          error: error.message,
-        },
-        error.status || HttpStatus.INTERNAL_SERVER_ERROR,
-        {
-          cause: error,
-        },
-      );
-    }
-  }
 }
