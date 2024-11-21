@@ -17,6 +17,7 @@ import { ProductsService } from './products/products.service';
 import { ProductsModule } from './products/products.module';
 import constants from './common/constants';
 import { Product } from './models/products/product.entity';
+import { OrdersModule } from './orders/orders.module';
 
 @Module({
   imports: [
@@ -35,6 +36,7 @@ import { Product } from './models/products/product.entity';
     UsersModule,
     AuthModule,
     ProductsModule,
+    OrdersModule,
   ],
   controllers: [
     AppController,
