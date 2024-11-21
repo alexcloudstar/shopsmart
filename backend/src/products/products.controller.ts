@@ -70,13 +70,17 @@ export class ProductsController {
 
   @Patch('/rating/:product_id')
   addRating(
-    product_id: string,
-    user_id: string,
-    @Body() rating: number,
+    @Param() params: { product_id: string },
+    @Body() body: { rating: number },
+    @JWTPayloadDecorator() jwt_payload: IJWT_PAYLOAD,
   ): Promise<{
     message: string;
   }> {
-    return this.productService.addRating(product_id, user_id, rating);
+    return this.productService.addRating(
+      params.product_id,
+      body.rating,
+      jwt_payload,
+    );
   }
 
   // add to cart

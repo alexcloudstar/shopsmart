@@ -9,9 +9,9 @@ import { Product } from 'src/models/products/product.entity';
 import { Repository } from 'typeorm';
 import { TProductDto } from './interfaces/product.dto';
 import { UsersService } from 'src/users/users.service';
-import { on } from 'events';
-import { IJWT_PAYLOAD, IRequestWithUser } from 'src/common/types';
+import { IJWT_PAYLOAD } from 'src/common/types';
 import { JWTPayloadDecorator } from 'src/common/decorators/jwt_payload.decorator';
+import { calculateNewRating } from './utils';
 
 @Injectable()
 export class ProductsService {
@@ -207,7 +207,6 @@ export class ProductsService {
         message,
       };
     } catch (error) {
-      console.log(error);
       throw new HttpException(
         {
           status: HttpStatus.INTERNAL_SERVER_ERROR,
@@ -223,19 +222,59 @@ export class ProductsService {
 
   async addRating(
     product_id: string,
-    user_id: string,
     rating: number,
+    jwt_payload: IJWT_PAYLOAD,
   ): Promise<{
     message: string;
   }> {
-    console.log({
-      product_id,
-      user_id,
-      rating,
-    });
+    try {
+      const product = await this.productRepository.findOne({
+        where: { id: product_id },
+      });
 
-    return {
-      message: 'Rating added',
-    };
+      if (!product) {
+        throw new HttpException(
+          {
+            status: HttpStatus.NOT_FOUND,
+            error: 'Product not found',
+          },
+          HttpStatus.NOT_FOUND,
+        );
+      }
+
+      if (product.vendor_id === jwt_payload.sub.toString()) {
+        throw new ForbiddenException('You can not rate your own product');
+      }
+
+      const newRating = (product.rating + rating) / 2;
+      const updatedRating = calculateNewRating(
+        product.rating,
+        product.rating_count,
+        newRating,
+      );
+
+      await this.productRepository.update(
+        { id: product_id },
+        {
+          rating_count: product.rating_count + 1,
+          rating: updatedRating,
+        },
+      );
+
+      return {
+        message: 'Rating added',
+      };
+    } catch (error) {
+      throw new HttpException(
+        {
+          status: HttpStatus.INTERNAL_SERVER_ERROR,
+          error: error.message,
+        },
+        HttpStatus.INTERNAL_SERVER_ERROR,
+        {
+          cause: error,
+        },
+      );
+    }
   }
 }

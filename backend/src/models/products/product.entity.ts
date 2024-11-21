@@ -52,8 +52,13 @@ export class Product {
   })
   stock: number;
   @Column({
+    type: 'int',
+    default: 0,
+  })
+  rating_count: number;
+  @Column({
     type: 'float',
-    nullable: true,
+    default: 0,
   })
   rating: number;
   @Column({
