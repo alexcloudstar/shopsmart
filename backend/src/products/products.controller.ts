@@ -79,18 +79,11 @@ export class ProductsController {
     );
   }
 
-  @Patch('/cart/:product_id')
+  @Post('/cart/:product_id')
   addToCart(
     @Param() params: { product_id: string },
     @JWTPayloadDecorator() jwt_payload: IJWT_PAYLOAD,
   ): Promise<TRequest> {
     return this.productService.addToCart(params.product_id, jwt_payload);
-  }
-
-  @Patch('/order')
-  placeOrder(
-    @JWTPayloadDecorator() jwt_payload: IJWT_PAYLOAD,
-  ): Promise<TRequest> {
-    return this.productService.placeOrder(jwt_payload);
   }
 }
