@@ -330,32 +330,4 @@ export class ProductsService {
       );
     }
   }
-
-  async placeOrder(
-    @JWTPayloadDecorator() jwt_payload: IJWT_PAYLOAD,
-  ): Promise<TRequest> {
-    try {
-      const user = await this.userService.findOne(jwt_payload.sub);
-
-      const cart = user.cart;
-
-      // TODO: You can add more logic here to handle the order
-
-      return {
-        status: HttpStatus.OK,
-        message: 'Order placed',
-      };
-    } catch (error) {
-      throw new HttpException(
-        {
-          status: HttpStatus.INTERNAL_SERVER_ERROR,
-          error: error.message,
-        },
-        HttpStatus.INTERNAL_SERVER_ERROR,
-        {
-          cause: error,
-        },
-      );
-    }
-  }
 }
