@@ -2,6 +2,7 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { IJWT_PAYLOAD } from 'src/common/types';
 import { Order } from 'src/models/orders/order.entity';
+import { ProductsService } from 'src/products/products.service';
 import { UsersService } from 'src/users/users.service';
 import { Repository } from 'typeorm';
 
@@ -11,6 +12,7 @@ export class OrdersService {
     @InjectRepository(Order)
     private orderRepository: Repository<Order>,
     private userService: UsersService,
+    private productService: ProductsService,
   ) {}
 
   async findAll(): Promise<Order[]> {
@@ -68,6 +70,16 @@ export class OrdersService {
     try {
       const user = await this.userService.findOne(jwt_payload.sub);
 
+      const products = await this.productService.findAll();
+      const filtered = products.filter((product) => {
+        return user.cart.includes(product.id.toString());
+      });
+
+      const total: number = filtered.reduce(
+        (acc, product) => acc + product.price,
+        0,
+      );
+
       // TODO: find products prices from the user.cart
 
       if (!user) {
@@ -93,7 +105,7 @@ export class OrdersService {
       const order = await this.orderRepository.save({
         user_id: user.id,
         products: user.cart,
-        total: 300,
+        total,
       });
 
       user.cart = [];
@@ -120,6 +132,40 @@ export class OrdersService {
     createOrderDto: any,
     jwt_payload: IJWT_PAYLOAD,
   ): Promise<Order> {
-    return {} as Order;
+    try {
+      const order = await this.orderRepository.findOne({
+        where: {
+          id,
+        },
+      });
+
+      if (!order) {
+        throw new HttpException(
+          {
+            status: HttpStatus.NOT_FOUND,
+            error: 'Order not found',
+          },
+          HttpStatus.NOT_FOUND,
+        );
+      }
+
+      const updatedOrder = await this.orderRepository.save({
+        ...order,
+        ...createOrderDto,
+      });
+
+      return updatedOrder;
+    } catch (error) {
+      throw new HttpException(
+        {
+          status: error.status || HttpStatus.INTERNAL_SERVER_ERROR,
+          error: error.message,
+        },
+        error.status || HttpStatus.INTERNAL_SERVER_ERROR,
+        {
+          cause: error,
+        },
+      );
+    }
   }
 }
