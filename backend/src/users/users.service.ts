@@ -5,7 +5,7 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { IJWT_PAYLOAD } from 'src/common/types';
+import { IJWT_PAYLOAD, IRequestWithUser } from 'src/common/types';
 import { User } from 'src/models/users/user.entity';
 import { Repository } from 'typeorm';
 
@@ -40,12 +40,12 @@ export class UsersService {
     }
   }
 
-  async me(req: Request & { user: User }): Promise<User> {
+  async me(req: IRequestWithUser): Promise<User> {
     try {
       if (!req.user) throw new UnauthorizedException();
 
       const user = await this.userRepository.findOne({
-        where: { id: req.user.id },
+        where: { id: req.user.sub },
       });
 
       return {
@@ -94,19 +94,14 @@ export class UsersService {
     }
   }
 
-  async update(
-    id: string,
+  async update_profile(
     fields: Record<string, any>,
     jwt_payload: IJWT_PAYLOAD,
   ): Promise<User> {
     try {
-      const user = await this.findOne(id);
+      const user = await this.findOne(jwt_payload.sub);
 
       if (!user) throw new Error('User not found');
-
-      if (jwt_payload.sub !== user.id) {
-        throw new Error('Unauthorized');
-      }
 
       const updatedUser = await this.userRepository.save({
         ...user,
@@ -118,6 +113,8 @@ export class UsersService {
         password: undefined,
       };
     } catch (error) {
+      console.log(error);
+
       throw new HttpException(
         {
           status: HttpStatus.INTERNAL_SERVER_ERROR,

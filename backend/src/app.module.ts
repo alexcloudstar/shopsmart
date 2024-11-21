@@ -12,7 +12,11 @@ import { UsersService } from './users/users.service';
 import { AuthModule } from './auth/auth.module';
 import { AuthService } from './auth/auth.service';
 import { AuthController } from './auth/auth.controller';
+import { ProductsController } from './products/products.controller';
+import { ProductsService } from './products/products.service';
+import { ProductsModule } from './products/products.module';
 import constants from './common/constants';
+import { Product } from './models/products/product.entity';
 
 @Module({
   imports: [
@@ -24,15 +28,21 @@ import constants from './common/constants';
       username: constants().db.username,
       password: constants().db.password,
       database: constants().db.database,
-      entities: [User, Address],
+      entities: [User, Address, Product],
       synchronize: true,
       autoLoadEntities: true,
     }),
     UsersModule,
     AuthModule,
+    ProductsModule,
   ],
-  controllers: [AppController, UsersController, AuthController],
-  providers: [AppService, UsersService, AuthService],
+  controllers: [
+    AppController,
+    UsersController,
+    AuthController,
+    ProductsController,
+  ],
+  providers: [AppService, UsersService, AuthService, ProductsService],
 })
 export class AppModule {
   constructor(private dataSource: DataSource) {}

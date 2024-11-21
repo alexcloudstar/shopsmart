@@ -1,6 +1,7 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { UserType } from 'src/users/interfaces/user.interface';
 import { IsEmail } from 'class-validator';
+import { Product } from '../products/product.entity';
 
 @Entity()
 export class User {
@@ -33,4 +34,23 @@ export class User {
     default: UserType.USER,
   })
   type: UserType;
+  @OneToMany(() => Product, (product) => product.vendor_id)
+  products: string[];
+  @Column({
+    type: 'varchar',
+    array: true,
+    nullable: true,
+  })
+  @Column({
+    type: 'varchar',
+    array: true,
+    default: [],
+  })
+  favorites: string[];
+  @Column({
+    type: 'varchar',
+    array: true,
+    default: [],
+  })
+  cart: string[];
 }

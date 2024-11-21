@@ -5,14 +5,14 @@ import {
   HttpCode,
   HttpStatus,
   Param,
-  Patch,
+  Put,
   Req,
   UseGuards,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { User } from 'src/models/users/user.entity';
 import { AuthGuard } from 'src/auth/auth.guard';
-import { IJWT_PAYLOAD } from 'src/common/types';
+import { IJWT_PAYLOAD, IRequestWithUser } from 'src/common/types';
 import { JWTPayloadDecorator } from 'src/common/decorators/jwt_payload.decorator';
 
 @UseGuards(AuthGuard)
@@ -28,7 +28,7 @@ export class UsersController {
 
   @Get('me')
   @HttpCode(HttpStatus.OK)
-  me(@Req() req: Request & { user: User }): Promise<User> {
+  me(@Req() req: Request & IRequestWithUser): Promise<User> {
     return this.usersService.me(req);
   }
 
@@ -38,13 +38,12 @@ export class UsersController {
     return this.usersService.findOne(params.id);
   }
 
-  @Patch(':id')
+  @Put('/update_profile')
   @HttpCode(HttpStatus.OK)
   update(
-    @Param() params: { id: string },
     @Body() user: User,
     @JWTPayloadDecorator() jwt_payload: IJWT_PAYLOAD,
   ): Promise<User> {
-    return this.usersService.update(params.id, user, jwt_payload);
+    return this.usersService.update_profile(user, jwt_payload);
   }
 }
